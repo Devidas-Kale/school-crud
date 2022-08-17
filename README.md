@@ -20,13 +20,13 @@ Design:
 
 REST APIs:
 1. Login.
-2. Add school.
+2. Add/Update school.
 3. Fetch schools.
 4. Delete school.
 
 Steps to use:
 1. Login with the above given username and passord.
-2. Add a school with name and address.
+2. Add/Update a school with id, name and address.
 3. Delete a school.
 4. Sign out.
 
