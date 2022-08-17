@@ -35,7 +35,7 @@ const Login = () => {
     event.preventDefault();
 
     try {
-      const { data } = await axios.post("/api/signin", {
+      const { data } = await axios.post("/api/login", {
         name: userName,
         password: password,
       });
@@ -66,7 +66,7 @@ const Login = () => {
       };
       try {
         const { data } = await axios.put(
-          `/api/addschool/${userInfo.name}`,
+          `/api/schools/${userInfo.name}`,
           schoolDetails,
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },

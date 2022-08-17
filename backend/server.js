@@ -57,7 +57,7 @@ app.post("/api/authenticate", async (req, res) => {
 });
 
 app.post(
-  "/api/signin",
+  "/api/login",
   expressAsyncHandler(async (req, res) => {
     const accountName = req.body.name;
     if (accounts.has(accountName)) {
