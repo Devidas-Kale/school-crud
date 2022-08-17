@@ -25,7 +25,7 @@ REST APIs:
 4. Delete school.
 
 Steps to use:
-1. Login with the above given username and passord.
+1. Login with the above given username and password.
 2. Add/Update a school with id, name and address.
 3. Delete a school.
 4. Sign out.
