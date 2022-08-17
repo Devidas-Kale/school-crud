@@ -9,8 +9,27 @@ const Login = () => {
 
   const [schoolName, setSchoolName] = useState("");
   const [schoolAddress, setSchoolAddress] = useState("");
+  const [schoolUpdate, setSchoolUpdate] = useState(false);
 
   const [schoolList, setSchoolList] = useState([]);
+  const [addSchoolError, setAddSchoolError] = useState("");
+
+  useEffect(() => {
+    getSchoolList();
+  }, [userInfo, schoolUpdate]);
+
+  const getSchoolList = async () => {
+    if (userInfo !== "") {
+      try {
+        const { data } = await axios.get(`/api/schools/${userInfo.name}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        setSchoolList(data.arr);
+      } catch (error) {
+        //setAddSchoolError(error.response.data.message);
+      }
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -34,18 +53,32 @@ const Login = () => {
   const signout = () => {
     localStorage.removeItem("userInfo");
     setUserInfo("");
+    setUserName("");
+    setPassword("");
   };
 
-  const addNewSchoolInfo = () => {
+  const addNewSchoolInfoApi = async () => {
     if (schoolName !== "" && schoolAddress !== "") {
       const schoolDetails = {
         id: Math.floor(Math.random() * 1000),
         schoolName: schoolName,
         schoolAddress: schoolAddress,
       };
-      setSchoolList([...schoolList, schoolDetails]);
-      setSchoolName("");
-      setSchoolAddress("");
+      try {
+        const { data } = await axios.put(
+          `/api/addschool/${userInfo.name}`,
+          schoolDetails,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        setSchoolUpdate(schoolUpdate ? false : true);
+        setSchoolName("");
+        setSchoolAddress("");
+        setAddSchoolError("");
+      } catch (error) {
+        setAddSchoolError(error.response.data.message);
+      }
     }
   };
 
@@ -97,6 +130,7 @@ const Login = () => {
           <div>
             <hr></hr>
             <br></br>
+            {addSchoolError !== "" && addSchoolError}
             <label>School Name </label>
             <input
               type="text"
@@ -115,18 +149,18 @@ const Login = () => {
               required
               placeholder="Enter school address"
             />
-            <button onClick={addNewSchoolInfo}>Add</button>
+            <button onClick={addNewSchoolInfoApi}>Add</button>
           </div>
 
           <hr></hr>
           {schoolList !== [] ? (
             <ul>
               {schoolList.map((row) => (
-                <li>
-                  {row.schoolName} {row.schoolAddress}
+                <li key={row.value.id}>
+                  {row.value.schoolName} {row.value.schoolAddress}
                   <button
                     onClick={(e) => {
-                      deleteSchool(e, row.id);
+                      deleteSchool(e, row.value.id);
                     }}
                   >
                     Delete

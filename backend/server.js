@@ -16,6 +16,9 @@ const accounts = new Map();
 accounts.set("Alex", "alex");
 accounts.set("Joe", "joe");
 
+const alexSchools = new Map();
+const joeSchools = new Map();
+
 const generateToken = (accountName) => {
   return jwt.sign(
     {
@@ -26,6 +29,27 @@ const generateToken = (accountName) => {
       expiresIn: "30d",
     }
   );
+};
+
+const isAuth = (req, res, next) => {
+  const authorization = req.headers.authorization;
+  if (authorization) {
+    const token = authorization.slice(7, authorization.length); // Bearer XXXXXX
+    jwt.verify(
+      token,
+      process.env.JWT_SECRET || "somethingsecret",
+      (err, decode) => {
+        if (err) {
+          res.status(401).send({ message: "Invalid Token" });
+        } else {
+          req.user = decode;
+          next();
+        }
+      }
+    );
+  } else {
+    res.status(401).send({ message: "No Token" });
+  }
 };
 
 app.post("/api/authenticate", async (req, res) => {
@@ -46,6 +70,61 @@ app.post(
       }
     }
     res.status(401).send({ message: "Invalid username or password" });
+  })
+);
+
+app.put(
+  "/api/addschool/:name",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    if (
+      accounts.has(req.params.name) &&
+      req.body.id !== "" &&
+      req.body.schoolName !== "" &&
+      req.body.schoolAddress !== ""
+    ) {
+      if (req.params.name === "Alex") {
+        alexSchools.set(req.body.id, req.body);
+        res.send({
+          alexSchools: "success",
+        });
+        return;
+      } else {
+        joeSchools.set(req.body.id, req.body);
+        res.send({
+          joeSchools: "success",
+        });
+        return;
+      }
+    }
+    res.status(401).send({ message: "Error while creating school." });
+  })
+);
+
+app.get(
+  "/api/schools/:name",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    if (accounts.has(req.params.name)) {
+      if (req.params.name === "Alex") {
+        res.send({
+          arr: Array.from(alexSchools).map(([name, value]) => ({
+            name,
+            value,
+          })),
+        });
+        return;
+      } else {
+        res.send({
+          arr: Array.from(joeSchools).map(([name, value]) => ({
+            name,
+            value,
+          })),
+        });
+        return;
+      }
+    }
+    res.status(401).send({ message: "Error while fetching schools." });
   })
 );
 
