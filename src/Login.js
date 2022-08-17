@@ -8,25 +8,26 @@ const Login = () => {
   const [errorMessages, setErrorMessages] = useState("");
 
   const handleSubmit = async (event) => {
-    // Prevent page reload
     event.preventDefault();
-    console.log(userName + " " + password);
+
     try {
-      const { res } = await axios.post("/api/signin", {
+      const { data } = await axios.post("/api/signin", {
         name: userName,
         password: password,
       });
-      setUserInfo(res);
-      //localStorage.setItem('userInfo', JSON.stringify(res));
+      setUserInfo(data);
+      localStorage.setItem("userInfo", JSON.stringify(data));
       setErrorMessages("");
-      console.log("Token: " + res.data);
     } catch (error) {
-      console.log(error.response.data.message);
       setErrorMessages(error.response.data.message);
       setUserName("");
       setPassword("");
       setUserInfo("");
     }
+  };
+
+  const signout = () => {
+    localStorage.removeItem("userInfo");
   };
 
   return (

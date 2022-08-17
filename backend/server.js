@@ -29,7 +29,6 @@ const generateToken = (accountName) => {
 };
 
 app.post("/api/authenticate", async (req, res) => {
-  console.log(req.body.name + "  " + req.body.password);
   res.send("Test endpoint");
 });
 
@@ -38,15 +37,7 @@ app.post(
   expressAsyncHandler(async (req, res) => {
     const accountName = req.body.name;
     if (accounts.has(accountName)) {
-      console.log(
-        req.body.name +
-          " " +
-          req.body.password +
-          " " +
-          accounts.get(accountName)
-      );
       if (req.body.password == accounts.get(accountName)) {
-        console.log(req.body.password);
         res.send({
           name: accountName,
           token: generateToken(accountName),
@@ -59,6 +50,7 @@ app.post(
 );
 
 const port = process.env.PORT || 5000;
+const httpServer = http.Server(app);
 
 httpServer.listen(port, () => {
   console.log(`Serve at http://localhost:${port}`);
