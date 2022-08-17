@@ -9,6 +9,7 @@ const Login = () => {
 
   const [schoolName, setSchoolName] = useState("");
   const [schoolAddress, setSchoolAddress] = useState("");
+  const [schoolId, setSchoolId] = useState("");
   const [schoolUpdate, setSchoolUpdate] = useState(false);
 
   const [schoolList, setSchoolList] = useState([]);
@@ -54,9 +55,9 @@ const Login = () => {
   };
 
   const addNewSchoolInfoApi = async () => {
-    if (schoolName !== "" && schoolAddress !== "") {
+    if (schoolId !== "" && schoolName !== "" && schoolAddress !== "") {
       const schoolDetails = {
-        id: Math.floor(Math.random() * 1000),
+        schoolId: schoolId,
         schoolName: schoolName,
         schoolAddress: schoolAddress,
       };
@@ -65,6 +66,7 @@ const Login = () => {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
         setSchoolUpdate(schoolUpdate ? false : true);
+        setSchoolId("");
         setSchoolName("");
         setSchoolAddress("");
         setAddSchoolError("");
@@ -75,6 +77,7 @@ const Login = () => {
   };
 
   const deleteSchoolApi = async (e, id) => {
+    console.log(id);
     if (userInfo !== "") {
       await axios.delete(`/api/schools/${id}`, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -85,6 +88,8 @@ const Login = () => {
       setSchoolUpdate(schoolUpdate ? false : true);
     }
   };
+
+  const updateSchool = () => {};
 
   return (
     <div>
@@ -140,6 +145,17 @@ const Login = () => {
             <div>{addSchoolError !== "" && addSchoolError}</div>
             <div className="addBox">
               <div>
+                <label>School Id </label>
+                <input
+                  type="number"
+                  name="schoolId"
+                  onChange={(e) => setSchoolId(e.target.value)}
+                  value={schoolId}
+                  required
+                  placeholder="Enter school Id"
+                />
+              </div>
+              <div>
                 <label>School Name </label>
                 <input
                   type="text"
@@ -162,7 +178,7 @@ const Login = () => {
                 />
               </div>
               <div>
-                <button onClick={addNewSchoolInfoApi}>Add</button>
+                <button onClick={addNewSchoolInfoApi}>Add/Update</button>
               </div>
             </div>
           </div>
@@ -171,18 +187,20 @@ const Login = () => {
           {schoolList !== [] ? (
             <table>
               <tr>
+                <th>Id</th>
                 <th>School</th>
                 <th>Address</th>
                 <th>Delete</th>
               </tr>
               {schoolList.map((row) => (
-                <tr key={row.value.id}>
+                <tr key={row.value.schoolId}>
+                  <td>{row.value.schoolId}</td>
                   <td>{row.value.schoolName}</td>
                   <td>{row.value.schoolAddress}</td>
                   <td>
                     <button
                       onClick={(e) => {
-                        deleteSchoolApi(e, row.value.id);
+                        deleteSchoolApi(e, row.value.schoolId);
                       }}
                     >
                       Delete

@@ -73,18 +73,18 @@ app.put(
   expressAsyncHandler(async (req, res) => {
     if (
       accounts.has(req.params.name) &&
-      req.body.id !== "" &&
+      req.body.schoolId !== "" &&
       req.body.schoolName !== "" &&
       req.body.schoolAddress !== ""
     ) {
       if (req.params.name === "Alex") {
-        alexSchools.set(req.body.id, req.body);
+        alexSchools.set(req.body.schoolId, req.body);
         res.send({
           data: "success",
         });
         return;
       } else {
-        joeSchools.set(req.body.id, req.body);
+        joeSchools.set(req.body.schoolId, req.body);
         res.send({
           data: "success",
         });
@@ -128,13 +128,13 @@ app.delete(
   expressAsyncHandler(async (req, res) => {
     if (accounts.has(req.body.name)) {
       if (req.body.name === "Alex") {
-        alexSchools.delete(parseInt(req.params.id));
+        alexSchools.delete(req.params.id);
         res.send({
           data: "deleted",
         });
         return;
       } else {
-        joeSchools.delete(parseInt(req.params.id));
+        joeSchools.delete(req.params.id);
         res.send({
           data: "deleted",
         });
