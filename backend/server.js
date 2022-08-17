@@ -74,7 +74,7 @@ app.post(
 );
 
 app.put(
-  "/api/addschool/:name",
+  "/api/schools/:name",
   isAuth,
   expressAsyncHandler(async (req, res) => {
     if (
@@ -86,13 +86,13 @@ app.put(
       if (req.params.name === "Alex") {
         alexSchools.set(req.body.id, req.body);
         res.send({
-          alexSchools: "success",
+          data: "success",
         });
         return;
       } else {
         joeSchools.set(req.body.id, req.body);
         res.send({
-          joeSchools: "success",
+          data: "success",
         });
         return;
       }
@@ -125,6 +125,29 @@ app.get(
       }
     }
     res.status(401).send({ message: "Error while fetching schools." });
+  })
+);
+
+app.delete(
+  "/api/schools/:id",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    if (accounts.has(req.body.name)) {
+      if (req.body.name === "Alex") {
+        alexSchools.delete(parseInt(req.params.id));
+        res.send({
+          data: "deleted",
+        });
+        return;
+      } else {
+        joeSchools.delete(parseInt(req.params.id));
+        res.send({
+          data: "deleted",
+        });
+        return;
+      }
+    }
+    res.status(401).send({ message: "Error while deleting school." });
   })
 );
 

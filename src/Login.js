@@ -20,14 +20,10 @@ const Login = () => {
 
   const getSchoolList = async () => {
     if (userInfo !== "") {
-      try {
-        const { data } = await axios.get(`/api/schools/${userInfo.name}`, {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
-        setSchoolList(data.arr);
-      } catch (error) {
-        //setAddSchoolError(error.response.data.message);
-      }
+      const { data } = await axios.get(`/api/schools/${userInfo.name}`, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      setSchoolList(data.arr);
     }
   };
 
@@ -82,11 +78,16 @@ const Login = () => {
     }
   };
 
-  const deleteSchool = (e, id) => {
-    e.preventDefault();
-    if (schoolList !== []) {
-      let newSchoolList = schoolList.filter((school) => school.id !== id);
-      setSchoolList([...newSchoolList]);
+  const deleteSchoolApi = async (e, id) => {
+    //e.preventDefault();
+    if (userInfo !== "") {
+      const { data } = await axios.delete(`/api/schools/${id}`, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+        data: {
+          name: userInfo.name,
+        },
+      });
+      setSchoolUpdate(schoolUpdate ? false : true);
     }
   };
 
@@ -160,7 +161,7 @@ const Login = () => {
                   {row.value.schoolName} {row.value.schoolAddress}
                   <button
                     onClick={(e) => {
-                      deleteSchool(e, row.value.id);
+                      deleteSchoolApi(e, row.value.id);
                     }}
                   >
                     Delete
