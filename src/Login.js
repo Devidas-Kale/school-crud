@@ -89,8 +89,6 @@ const Login = () => {
     }
   };
 
-  const updateSchool = () => {};
-
   return (
     <div>
       {userInfo === "" ? (
