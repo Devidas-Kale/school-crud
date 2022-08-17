@@ -10,14 +10,14 @@ const Login = () => {
   const [schoolName, setSchoolName] = useState("");
   const [schoolAddress, setSchoolAddress] = useState("");
   const [schoolId, setSchoolId] = useState("");
-  const [schoolUpdate, setSchoolUpdate] = useState(false);
+  const [schoolListUpdateFlag, setSchoolListUpdateFlag] = useState(false);
 
   const [schoolList, setSchoolList] = useState([]);
-  const [addSchoolError, setAddSchoolError] = useState("");
+  const [schoolAddError, setschoolAddError] = useState("");
 
   useEffect(() => {
     getSchoolList();
-  }, [userInfo, schoolUpdate]);
+  }, [userInfo, schoolListUpdateFlag]);
 
   const getSchoolList = async () => {
     if (userInfo !== "") {
@@ -37,7 +37,6 @@ const Login = () => {
         password: password,
       });
       setUserInfo(data);
-      localStorage.setItem("userInfo", JSON.stringify(data));
       setErrorMessages("");
     } catch (error) {
       setErrorMessages(error.response.data.message);
@@ -48,13 +47,12 @@ const Login = () => {
   };
 
   const signout = () => {
-    localStorage.removeItem("userInfo");
     setUserInfo("");
     setUserName("");
     setPassword("");
   };
 
-  const addNewSchoolInfoApi = async () => {
+  const addUpdateSchoolInfoApi = async () => {
     if (schoolId !== "" && schoolName !== "" && schoolAddress !== "") {
       const schoolDetails = {
         schoolId: schoolId,
@@ -65,13 +63,13 @@ const Login = () => {
         await axios.put(`/api/schools/${userInfo.name}`, schoolDetails, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
-        setSchoolUpdate(schoolUpdate ? false : true);
+        setSchoolListUpdateFlag(schoolListUpdateFlag ? false : true);
         setSchoolId("");
         setSchoolName("");
         setSchoolAddress("");
-        setAddSchoolError("");
+        setschoolAddError("");
       } catch (error) {
-        setAddSchoolError(error.response.data.message);
+        setschoolAddError(error.response.data.message);
       }
     }
   };
@@ -85,7 +83,7 @@ const Login = () => {
           name: userInfo.name,
         },
       });
-      setSchoolUpdate(schoolUpdate ? false : true);
+      setSchoolListUpdateFlag(schoolListUpdateFlag ? false : true);
     }
   };
 
@@ -94,7 +92,7 @@ const Login = () => {
       {userInfo === "" ? (
         <form onSubmit={handleSubmit} className="form">
           <div>
-            <h1>Admin Login</h1>
+            <h1>User Login</h1>
             {errorMessages !== "" && errorMessages}
             <div>
               <div>
@@ -140,7 +138,7 @@ const Login = () => {
 
           <div>
             <hr></hr>
-            <div>{addSchoolError !== "" && addSchoolError}</div>
+            <div>{schoolAddError !== "" && schoolAddError}</div>
             <div className="addBox">
               <div>
                 <label>School Id </label>
@@ -176,7 +174,7 @@ const Login = () => {
                 />
               </div>
               <div>
-                <button onClick={addNewSchoolInfoApi}>Add/Update</button>
+                <button onClick={addUpdateSchoolInfoApi}>Add/Update</button>
               </div>
             </div>
           </div>
