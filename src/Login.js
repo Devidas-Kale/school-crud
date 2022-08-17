@@ -94,81 +94,108 @@ const Login = () => {
   return (
     <div>
       {userInfo === "" ? (
-        <form onSubmit={handleSubmit}>
-          <h1>Admin Login</h1>
-          {errorMessages !== "" && errorMessages}
+        <form onSubmit={handleSubmit} className="form">
           <div>
-            <label>Username </label>
-            <input
-              type="text"
-              name="uname"
-              onChange={(e) => setUserName(e.target.value)}
-              value={userName}
-              required
-              placeholder="Enter name"
-            />
-          </div>
-          <div>
-            <label>Password </label>
-            <input
-              type="Password"
-              name="pass"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              required
-              placeholder="Enter password"
-            />
-          </div>
-          <div>
-            <input type="submit" />
+            <h1>Admin Login</h1>
+            {errorMessages !== "" && errorMessages}
+            <div>
+              <div>
+                <div>
+                  <label>Username </label>
+                  <input
+                    type="text"
+                    name="uname"
+                    onChange={(e) => setUserName(e.target.value)}
+                    value={userName}
+                    required
+                    placeholder="Enter name"
+                  />
+                </div>
+                <div>
+                  <label>Password </label>
+                  <input
+                    type="Password"
+                    name="pass"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    required
+                    placeholder="Enter password"
+                  />
+                </div>
+              </div>
+              <div>
+                <input type="submit" />
+              </div>
+            </div>
           </div>
         </form>
       ) : (
         <div>
-          <h1>School List</h1>
-          <button onClick={signout}>Sign out</button>
+          <div >
+            <div className="head">
+              <h1>{userInfo.name} Dashboard - School List</h1>
+            </div>
+            <div className="signout">
+              <button onClick={signout}>Sign out</button>
+            </div>
+          </div>
 
           <div>
             <hr></hr>
-            <br></br>
-            {addSchoolError !== "" && addSchoolError}
-            <label>School Name </label>
-            <input
-              type="text"
-              name="schoolName"
-              onChange={(e) => setSchoolName(e.target.value)}
-              value={schoolName}
-              required
-              placeholder="Enter school name"
-            />
-            <label>School Address </label>
-            <input
-              type="text"
-              name="schoolAddress"
-              onChange={(e) => setSchoolAddress(e.target.value)}
-              value={schoolAddress}
-              required
-              placeholder="Enter school address"
-            />
-            <button onClick={addNewSchoolInfoApi}>Add</button>
+            <div>{addSchoolError !== "" && addSchoolError}</div>
+            <div className="addBox">
+              <div>
+                <label>School Name </label>
+                <input
+                  type="text"
+                  name="schoolName"
+                  onChange={(e) => setSchoolName(e.target.value)}
+                  value={schoolName}
+                  required
+                  placeholder="Enter school name"
+                />
+              </div>
+              <div>
+                <label>School Address </label>
+                <input
+                  type="text"
+                  name="schoolAddress"
+                  onChange={(e) => setSchoolAddress(e.target.value)}
+                  value={schoolAddress}
+                  required
+                  placeholder="Enter school address"
+                />
+              </div>
+              <div>
+                <button onClick={addNewSchoolInfoApi}>Add</button>
+              </div>
+            </div>
           </div>
 
           <hr></hr>
           {schoolList !== [] ? (
-            <ul>
+            <table>
+              <tr>
+                <th>School</th>
+                <th>Address</th>
+                <th>Delete</th>
+              </tr>
               {schoolList.map((row) => (
-                <li key={row.value.id}>
-                  {row.value.schoolName} {row.value.schoolAddress}
-                  <button
-                    onClick={(e) => {
-                      deleteSchoolApi(e, row.value.id);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </li>
+                <tr key={row.value.id}>
+                  <td>{row.value.schoolName}</td>
+                  <td>{row.value.schoolAddress}</td>
+                  <td>
+                    <button
+                      onClick={(e) => {
+                        deleteSchoolApi(e, row.value.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
               ))}
-            </ul>
+            </table>
           ) : null}
         </div>
       )}
