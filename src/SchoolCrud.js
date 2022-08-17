@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Login = () => {
+const SchoolCrud = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [userInfo, setUserInfo] = useState("");
@@ -212,4 +212,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SchoolCrud;
