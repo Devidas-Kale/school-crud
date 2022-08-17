@@ -1,9 +1,7 @@
 import express from "express";
 import http from "http";
-import { Server } from "socket.io";
 import dotenv from "dotenv";
 import expressAsyncHandler from "express-async-handler";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
@@ -51,10 +49,6 @@ const isAuth = (req, res, next) => {
     res.status(401).send({ message: "No Token" });
   }
 };
-
-app.post("/api/authenticate", async (req, res) => {
-  res.send("Test endpoint");
-});
 
 app.post(
   "/api/login",

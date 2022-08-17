@@ -61,13 +61,9 @@ const Login = () => {
         schoolAddress: schoolAddress,
       };
       try {
-        const { data } = await axios.put(
-          `/api/schools/${userInfo.name}`,
-          schoolDetails,
-          {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-          }
-        );
+        await axios.put(`/api/schools/${userInfo.name}`, schoolDetails, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
         setSchoolUpdate(schoolUpdate ? false : true);
         setSchoolName("");
         setSchoolAddress("");
@@ -79,9 +75,8 @@ const Login = () => {
   };
 
   const deleteSchoolApi = async (e, id) => {
-    //e.preventDefault();
     if (userInfo !== "") {
-      const { data } = await axios.delete(`/api/schools/${id}`, {
+      await axios.delete(`/api/schools/${id}`, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
         data: {
           name: userInfo.name,
@@ -131,9 +126,9 @@ const Login = () => {
         </form>
       ) : (
         <div>
-          <div >
+          <div>
             <div className="head">
-              <h1>{userInfo.name} Dashboard - School List</h1>
+              <h1>{userInfo.name}'s Dashboard - School List</h1>
             </div>
             <div className="signout">
               <button onClick={signout}>Sign out</button>
