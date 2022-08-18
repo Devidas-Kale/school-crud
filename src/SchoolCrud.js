@@ -75,7 +75,6 @@ const SchoolCrud = () => {
   };
 
   const deleteSchoolApi = async (e, id) => {
-    console.log(id);
     if (userInfo !== "") {
       await axios.delete(`/api/schools/${id}`, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
