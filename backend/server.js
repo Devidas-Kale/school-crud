@@ -54,8 +54,8 @@ app.post(
   "/api/login",
   expressAsyncHandler(async (req, res) => {
     const accountName = req.body.name;
-    if (accounts.has(accountName)) {
-      if (req.body.password == accounts.get(accountName)) {
+    if (accounts.has(String(accountName))) {
+      if (req.body.password == accounts.get(String(accountName))) {
         res.send({
           name: accountName,
           token: generateToken(accountName),
@@ -78,13 +78,13 @@ app.put(
       req.body.schoolAddress !== ""
     ) {
       if (req.params.name === "Alex") {
-        alexSchools.set(req.body.schoolId, req.body);
+        alexSchools.set(String(req.body.schoolId), req.body);
         res.send({
           data: "success",
         });
         return;
       } else {
-        joeSchools.set(req.body.schoolId, req.body);
+        joeSchools.set(String(req.body.schoolId), req.body);
         res.send({
           data: "success",
         });
@@ -126,15 +126,15 @@ app.delete(
   "/api/schools/:id",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    if (accounts.has(req.body.name)) {
-      if (req.body.name === "Alex") {
-        alexSchools.delete(req.params.id);
+    if (accounts.has(String(req.body.name))) {
+      if (String(req.body.name) === "Alex") {
+        alexSchools.delete(String(req.params.id));
         res.send({
           data: "deleted",
         });
         return;
       } else {
-        joeSchools.delete(req.params.id);
+        joeSchools.delete(String(req.params.id));
         res.send({
           data: "deleted",
         });
