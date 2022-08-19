@@ -108,7 +108,7 @@ const SchoolCrud = () => {
         <form onSubmit={handleSubmit} className="form">
           <div>
             <h1>User Login</h1>
-            {errorMessages !== "" && errorMessages}
+            <div className="error">{errorMessages !== "" && errorMessages}</div>
             <div>
               <div>
                 <div>
@@ -155,7 +155,9 @@ const SchoolCrud = () => {
 
           <div>
             <hr></hr>
-            <div>{schoolAddError !== "" && schoolAddError}</div>
+            <div className="error">
+              {schoolAddError !== "" && schoolAddError}
+            </div>
             <div className="addBox">
               <div>
                 <label>School Id </label>
