@@ -118,7 +118,7 @@ app.get(
         return;
       }
     }
-    res.status(401).send({ message: "Error while fetching schools." });
+    res.status(404).send({ message: "Error while fetching schools." });
   })
 );
 
@@ -141,7 +141,7 @@ app.delete(
         return;
       }
     }
-    res.status(401).send({ message: "Error while deleting school." });
+    res.status(404).send({ message: "Error while deleting school." });
   })
 );
 
