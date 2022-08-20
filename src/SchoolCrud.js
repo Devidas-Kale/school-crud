@@ -112,8 +112,9 @@ const SchoolCrud = () => {
             <div>
               <div>
                 <div>
-                  <label>Username </label>
+                  <label className="loginLabel">Username </label>
                   <input
+                    className="loginInput"
                     type="text"
                     name="username"
                     value={username}
@@ -124,8 +125,9 @@ const SchoolCrud = () => {
                   <br />
                 </div>
                 <div>
-                  <label>Password </label>
+                  <label className="loginLabel">Password </label>
                   <input
+                    className="loginInput"
                     type="password"
                     name="password"
                     value={password}
@@ -137,7 +139,7 @@ const SchoolCrud = () => {
                 </div>
               </div>
               <div>
-                <input type="submit" />
+                <input className="loginButton" type="submit" />
               </div>
             </div>
           </div>
