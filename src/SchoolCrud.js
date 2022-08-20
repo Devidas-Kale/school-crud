@@ -14,7 +14,6 @@ const SchoolCrud = () => {
     schoolName: "",
     schoolAddress: "",
   });
-  const [schoolListUpdateFlag, setSchoolListUpdateFlag] = useState(false);
 
   const [schoolList, setSchoolList] = useState([]);
   const [schoolAddError, setschoolAddError] = useState("");
@@ -24,7 +23,7 @@ const SchoolCrud = () => {
 
   useEffect(() => {
     getSchoolList();
-  }, [userInfo, schoolListUpdateFlag]);
+  }, [userInfo, schoolList]);
 
   const changeHandler = (e) => {
     setUserData({ ...userData, [e.target.name]: [e.target.value] });
@@ -80,7 +79,6 @@ const SchoolCrud = () => {
       await axios.put(`/api/schools/${userInfo.name}`, schoolDetails, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
       });
-      setSchoolListUpdateFlag(schoolListUpdateFlag ? false : true);
       setSchoolData({
         schoolId: "",
         schoolName: "",
@@ -98,7 +96,6 @@ const SchoolCrud = () => {
           name: userInfo.name,
         },
       });
-      setSchoolListUpdateFlag(schoolListUpdateFlag ? false : true);
     }
   };
 
