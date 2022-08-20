@@ -2,26 +2,41 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const SchoolCrud = () => {
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [userData, setUserData] = useState({
+    username: "",
+    password: "",
+  });
   const [userInfo, setUserInfo] = useState("");
   const [errorMessages, setErrorMessages] = useState("");
 
-  const [schoolName, setSchoolName] = useState("");
-  const [schoolAddress, setSchoolAddress] = useState("");
-  const [schoolId, setSchoolId] = useState("");
-  const [schoolListUpdateFlag, setSchoolListUpdateFlag] = useState(false);
+  const [schoolData, setSchoolData] = useState({
+    schoolId: "",
+    schoolName: "",
+    schoolAddress: "",
+  });
+  const [schoolListUpdateFlag, setSchoolListUpdateFlag] = useState(0);
 
   const [schoolList, setSchoolList] = useState([]);
   const [schoolAddError, setschoolAddError] = useState("");
+
+  const { username, password } = userData;
+  const { schoolId, schoolName, schoolAddress } = schoolData;
 
   useEffect(() => {
     getSchoolList();
   }, [userInfo, schoolListUpdateFlag]);
 
+  const changeUserDataHandler = (e) => {
+    setUserData({ ...userData, [e.target.name]: [e.target.value] });
+  };
+
+  const changeSchoolDataHandler = (e) => {
+    setSchoolData({ ...schoolData, [e.target.name]: [e.target.value] });
+  };
+
   const getSchoolList = async () => {
     if (userInfo !== "") {
-      const { data } = await axios.get(`/api/schools/${userInfo.name}`, {
+      const { data } = await axios.get("/api/schools", {
         headers: { Authorization: `Bearer ${userInfo.token}` },
       });
       setSchoolList(data.arr);
@@ -30,26 +45,29 @@ const SchoolCrud = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
       const { data } = await axios.post("/api/login", {
-        name: userName,
+        name: username,
         password: password,
       });
       setUserInfo(data);
       setErrorMessages("");
     } catch (error) {
       setErrorMessages(error.response.data.message);
-      setUserName("");
-      setPassword("");
+      setUserData({
+        username: "",
+        password: "",
+      });
       setUserInfo("");
     }
   };
 
   const signout = () => {
     setUserInfo("");
-    setUserName("");
-    setPassword("");
+    setUserData({
+      username: "",
+      password: "",
+    });
   };
 
   const addUpdateSchoolInfoApi = async () => {
@@ -59,30 +77,25 @@ const SchoolCrud = () => {
         schoolName: schoolName,
         schoolAddress: schoolAddress,
       };
-      try {
-        await axios.put(`/api/schools/${userInfo.name}`, schoolDetails, {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
-        setSchoolListUpdateFlag(schoolListUpdateFlag ? false : true);
-        setSchoolId("");
-        setSchoolName("");
-        setSchoolAddress("");
-        setschoolAddError("");
-      } catch (error) {
-        setschoolAddError(error.response.data.message);
-      }
+      await axios.put(`/api/schools/${schoolDetails.schoolId}`, schoolDetails, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      setSchoolListUpdateFlag(schoolListUpdateFlag + 1);
+      setSchoolData({
+        schoolId: "",
+        schoolName: "",
+        schoolAddress: "",
+      });
+      setschoolAddError("");
     }
   };
 
-  const deleteSchoolApi = async (e, id) => {
+  const deleteSchoolApi = async (id) => {
     if (userInfo !== "") {
       await axios.delete(`/api/schools/${id}`, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
-        data: {
-          name: userInfo.name,
-        },
       });
-      setSchoolListUpdateFlag(schoolListUpdateFlag ? false : true);
+      setSchoolListUpdateFlag(schoolListUpdateFlag + 1);
     }
   };
 
@@ -92,34 +105,38 @@ const SchoolCrud = () => {
         <form onSubmit={handleSubmit} className="form">
           <div>
             <h1>User Login</h1>
-            {errorMessages !== "" && errorMessages}
+            <div className="error">{errorMessages !== "" && errorMessages}</div>
             <div>
               <div>
                 <div>
-                  <label>Username </label>
+                  <label className="loginLabel">Username </label>
                   <input
+                    className="loginInput"
                     type="text"
-                    name="uname"
-                    onChange={(e) => setUserName(e.target.value)}
-                    value={userName}
+                    name="username"
+                    value={username}
+                    onChange={changeUserDataHandler}
                     required
                     placeholder="Enter name"
                   />
+                  <br />
                 </div>
                 <div>
-                  <label>Password </label>
+                  <label className="loginLabel">Password </label>
                   <input
-                    type="Password"
-                    name="pass"
-                    onChange={(e) => setPassword(e.target.value)}
+                    className="loginInput"
+                    type="password"
+                    name="password"
                     value={password}
+                    onChange={changeUserDataHandler}
                     required
                     placeholder="Enter password"
                   />
+                  <br />
                 </div>
               </div>
               <div>
-                <input type="submit" />
+                <input className="loginButton" type="submit" />
               </div>
             </div>
           </div>
@@ -137,14 +154,16 @@ const SchoolCrud = () => {
 
           <div>
             <hr></hr>
-            <div>{schoolAddError !== "" && schoolAddError}</div>
+            <div className="error">
+              {schoolAddError !== "" && schoolAddError}
+            </div>
             <div className="addBox">
               <div>
                 <label>School Id </label>
                 <input
                   type="number"
                   name="schoolId"
-                  onChange={(e) => setSchoolId(e.target.value)}
+                  onChange={changeSchoolDataHandler}
                   value={schoolId}
                   required
                   placeholder="Enter school Id"
@@ -155,7 +174,7 @@ const SchoolCrud = () => {
                 <input
                   type="text"
                   name="schoolName"
-                  onChange={(e) => setSchoolName(e.target.value)}
+                  onChange={changeSchoolDataHandler}
                   value={schoolName}
                   required
                   placeholder="Enter school name"
@@ -166,7 +185,7 @@ const SchoolCrud = () => {
                 <input
                   type="text"
                   name="schoolAddress"
-                  onChange={(e) => setSchoolAddress(e.target.value)}
+                  onChange={changeSchoolDataHandler}
                   value={schoolAddress}
                   required
                   placeholder="Enter school address"
@@ -195,7 +214,7 @@ const SchoolCrud = () => {
                   <td>
                     <button
                       onClick={(e) => {
-                        deleteSchoolApi(e, row.value.schoolId);
+                        deleteSchoolApi(row.value.schoolId);
                       }}
                     >
                       Delete
