@@ -29,6 +29,13 @@ const generateToken = (accountName) => {
   );
 };
 
+const getUserName = (req) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET || "somethingsecret");
+  return verify.name;
+};
+
 const isAuth = (req, res, next) => {
   const authorization = req.headers.authorization;
   if (authorization) {
@@ -68,23 +75,20 @@ app.post(
 );
 
 app.put(
-  "/api/schools/:name",
+  "/api/schools/:id",
   isAuth,
   expressAsyncHandler(async (req, res) => {
     if (
-      accounts.has(req.params.name) &&
       req.body.schoolId !== "" &&
       req.body.schoolName !== "" &&
       req.body.schoolAddress !== ""
     ) {
-      if (req.params.name === "Alex") {
-        alexSchools.set(String(req.body.schoolId), req.body);
-        res.send({
-          data: "success",
-        });
-        return;
-      } else {
-        joeSchools.set(String(req.body.schoolId), req.body);
+      const userName = getUserName(req);
+      if (accounts.has(String(userName))) {
+        (String(userName) === "Alex" ? alexSchools : joeSchools).set(
+          String(req.body.schoolId),
+          req.body
+        );
         res.send({
           data: "success",
         });
@@ -96,27 +100,20 @@ app.put(
 );
 
 app.get(
-  "/api/schools/:name",
+  "/api/schools",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    if (accounts.has(req.params.name)) {
-      if (req.params.name === "Alex") {
-        res.send({
-          arr: Array.from(alexSchools).map(([name, value]) => ({
-            name,
-            value,
-          })),
-        });
-        return;
-      } else {
-        res.send({
-          arr: Array.from(joeSchools).map(([name, value]) => ({
-            name,
-            value,
-          })),
-        });
-        return;
-      }
+    const userName = getUserName(req);
+    if (accounts.has(String(userName))) {
+      res.send({
+        arr: Array.from(
+          String(userName) === "Alex" ? alexSchools : joeSchools
+        ).map(([name, value]) => ({
+          name,
+          value,
+        })),
+      });
+      return;
     }
     res.status(404).send({ message: "Error while fetching schools." });
   })
@@ -126,20 +123,15 @@ app.delete(
   "/api/schools/:id",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    if (accounts.has(String(req.body.name))) {
-      if (String(req.body.name) === "Alex") {
-        alexSchools.delete(String(req.params.id));
-        res.send({
-          data: "deleted",
-        });
-        return;
-      } else {
-        joeSchools.delete(String(req.params.id));
-        res.send({
-          data: "deleted",
-        });
-        return;
-      }
+    const userName = getUserName(req);
+    if (accounts.has(String(userName))) {
+      (String(userName) === "Alex" ? alexSchools : joeSchools).delete(
+        String(req.params.id)
+      );
+      res.send({
+        data: "deleted",
+      });
+      return;
     }
     res.status(404).send({ message: "Error while deleting school." });
   })

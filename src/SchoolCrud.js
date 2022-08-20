@@ -14,6 +14,7 @@ const SchoolCrud = () => {
     schoolName: "",
     schoolAddress: "",
   });
+  const [schoolListUpdateFlag, setSchoolListUpdateFlag] = useState(0);
 
   const [schoolList, setSchoolList] = useState([]);
   const [schoolAddError, setschoolAddError] = useState("");
@@ -23,9 +24,9 @@ const SchoolCrud = () => {
 
   useEffect(() => {
     getSchoolList();
-  }, [userInfo, schoolList]);
+  }, [userInfo, schoolListUpdateFlag]);
 
-  const changeHandler = (e) => {
+  const changeUserDataHandler = (e) => {
     setUserData({ ...userData, [e.target.name]: [e.target.value] });
   };
 
@@ -35,7 +36,7 @@ const SchoolCrud = () => {
 
   const getSchoolList = async () => {
     if (userInfo !== "") {
-      const { data } = await axios.get(`/api/schools/${userInfo.name}`, {
+      const { data } = await axios.get("/api/schools", {
         headers: { Authorization: `Bearer ${userInfo.token}` },
       });
       setSchoolList(data.arr);
@@ -76,9 +77,10 @@ const SchoolCrud = () => {
         schoolName: schoolName,
         schoolAddress: schoolAddress,
       };
-      await axios.put(`/api/schools/${userInfo.name}`, schoolDetails, {
+      await axios.put(`/api/schools/${schoolDetails.schoolId}`, schoolDetails, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
       });
+      setSchoolListUpdateFlag(schoolListUpdateFlag + 1);
       setSchoolData({
         schoolId: "",
         schoolName: "",
@@ -92,10 +94,8 @@ const SchoolCrud = () => {
     if (userInfo !== "") {
       await axios.delete(`/api/schools/${id}`, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
-        data: {
-          name: userInfo.name,
-        },
       });
+      setSchoolListUpdateFlag(schoolListUpdateFlag + 1);
     }
   };
 
@@ -115,7 +115,7 @@ const SchoolCrud = () => {
                     type="text"
                     name="username"
                     value={username}
-                    onChange={changeHandler}
+                    onChange={changeUserDataHandler}
                     required
                     placeholder="Enter name"
                   />
@@ -128,7 +128,7 @@ const SchoolCrud = () => {
                     type="password"
                     name="password"
                     value={password}
-                    onChange={changeHandler}
+                    onChange={changeUserDataHandler}
                     required
                     placeholder="Enter password"
                   />
